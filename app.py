@@ -1,32 +1,45 @@
-import numpy as np
-from flask import Flask, request, jsonify, render_template
-from datetime import date
-import pickle
+import os
+from uuid import uuid4
 
-UPLOAD_FOLDER = 'D/COVID19/uploads'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+from flask import Flask, request, render_template, send_from_directory
 
 app = Flask(__name__)
-@app.route('/')
-def home():
-    return render_template('index.html')
-@app.route('/upload', methods=['GET', 'POST'])
-def upload():
-   if request.method == 'POST':
-        file = request.files['file']
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('uploaded_file', filename=filename))
-        
-@app.route('/show/<filename>')
-def uploaded_file(filename):
-    filename = 'http://127.0.0.1:5000/publish/' + filename
-    return render_template('template.html', filename=filename)
+# app = Flask(__name__, static_folder="images")
 
-@app.route('/publish/<filename>')
-def send_file(filename):
-    return send_from_directory(UPLOAD_FOLDER, filename)
+
+
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route("/upload", methods=["POST"])
+def upload():
+    target = os.path.join(APP_ROOT, 'images/')
+    # target = os.path.join(APP_ROOT, 'static/')
+    print(target)
+    if not os.path.isdir(target):
+            os.mkdir(target)
+    else:
+        print("Couldn't create upload directory: {}".format(target))
+    print(request.files.getlist("file"))
+    for upload in request.files.getlist("file"):
+        print(upload)
+        print("{} is the file name".format(upload.filename))
+        filename = upload.filename
+        destination = "/".join([target, filename])
+        print ("Accept incoming file:", filename)
+        print ("Save it to:", destination)
+        upload.save(destination)
+
+    # return send_from_directory("images", filename, as_attachment=True)
+    return render_template("template.html", image_name=filename)
+
+@app.route('/upload/<filename>')
+def send_image(filename):
+    return send_from_directory("images", filename)
 
 if __name__ == "__main__":
     app.run(debug=True)
+

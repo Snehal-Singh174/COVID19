@@ -19,26 +19,34 @@
     font-weight: bold;
   }
   </style>
-  <script type="text/javascript" src="/static/js/jquery.fileupload.js"></script>
-  <script type="text/javascript" src="/static/js/jquery.fileupload-process.js"></script>
-  <script type="text/javascript" src="/static/js/jquery.fileupload-ui.js"></script>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
   <script>
-    $(function() {
-    $('#fileupload').fileupload({
-        url: 'upload',
-        dataType: 'json',
-        add: function(e, data) {
-            data.submit();
-        },
-        success: function(response, status) {
-            console.log(response);
-        },
-        error: function(error) {
-            console.log(error);
+
+    $("#file-picker").change(function(){
+
+        var input = document.getElementById('file-picker');
+
+        for (var i=0; i<input.files.length; i++)
+        {
+            var ext= input.files[i].name.substring(input.files[i].name.lastIndexOf('.')+1).toLowerCase()
+
+            if ((ext == 'jpg') || (ext == 'png'))
+            {
+                $("#msg").text("Files are supported")
+            }
+            else
+            {
+                $("#msg").text("Files are NOT supported")
+                document.getElementById("file-picker").value ="";
+            }
+
         }
-    });
-})
-  </script>
+
+
+    } );
+
+</script>
 
 </head>
 <body style="background-image: url('{{ url_for('static', filename='bg.jpg') }}'); 
@@ -49,7 +57,20 @@ display:flex;
 ">
 <marquee direction="left"><h3>COVID19</h3></marquee>
 
-<form role="form" method="post" action="/addBlog"></form>
+<form id="upload-form" action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+
+<div class="login card">
+  <pre>
+  <h1 style="width: fit-content;">Upload Image To Detect<br> COVID19</h1>
+  <strong>Choose Image:</strong>
+  <input class="btn btn-primary btn-block btn-large" type="file" name="file" accept="image/*" multiple>
+  <input type="submit" value="Upload!" class="btn btn-primary btn-block btn-large">
+  </pre>
+</div>
+</form>
+
+
+<!--<form role="form" method="post" action="/upload"></form>
 <div class="login card">
 
   <h1 class="heading">Upload X-RAY Image</h1>
@@ -64,7 +85,7 @@ display:flex;
 </p>
    
  </div>
-</form>
+</form>-->
 
 </body>
 </html>
