@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html >
+<!--From https://codepen.io/frytyler/pen/EGdtg-->
+<head>
+  <meta charset="UTF-8">
+  <title>COVID19</title>
+  <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Hind:300' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+
+  
+<style>
+  ::placeholder {
+    color:rgb(13, 13, 14);
+    opacity:0.8; /* Firefox */
+    font-weight: bold;
+  }
+  </style>
+  <script type="text/javascript" src="/static/js/jquery.fileupload.js"></script>
+  <script type="text/javascript" src="/static/js/jquery.fileupload-process.js"></script>
+  <script type="text/javascript" src="/static/js/jquery.fileupload-ui.js"></script>
+  <script>
+    $(function() {
+    $('#fileupload').fileupload({
+        url: 'upload',
+        dataType: 'json',
+        add: function(e, data) {
+            data.submit();
+        },
+        success: function(response, status) {
+            console.log(response);
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    });
+})
+  </script>
+
+</head>
+<body style="background-image: url('{{ url_for('static', filename='bg.jpg') }}'); 
+background-repeat:no-repeat;
+background-size:cover;
+height:100vh;
+display:flex;
+">
+<marquee direction="left"><h3>COVID19</h3></marquee>
+
+<form role="form" method="post" action="/addBlog"></form>
+<div class="login card">
+
+  <h1 class="heading">Upload X-RAY Image</h1>
+  
+  <label for="txtPost">Photos: </label><br>
+      <span class="btn btn-primary btn-file">
+          Browse… <input type="file" id="fileupload" name="file" multiple>
+      </span>
+      </span>
+  <p class="text-center">
+    <input id="singlebutton" name="publish" class="btn btn-primary btn-block btn-large" type="submit" value="Publish" />
+</p>
+   
+ </div>
+</form>
+
+</body>
+</html>
